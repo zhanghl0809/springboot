@@ -1,0 +1,26 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    username: root
+    password: 8023zhl
+    url: jdbc:mysql://39.97.119.153:3306/ssm?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  http:
+    #编码格式
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.example.entity
+
+logging:
+  path: /Users/Administrator/Desktopims #日志文件路径
+  file: ims.log #日志文件名称
+  level:
+    com:
+      example: debug #日志级别 root表示所有包，也可以单独配置具体包 fatal error warn info debug trace off
