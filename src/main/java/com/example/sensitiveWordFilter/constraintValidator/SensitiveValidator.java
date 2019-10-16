@@ -48,3 +48,29 @@ import java.util.List;
 		return true;
 	}
 }
+//	public boolean isValid(Object value, ConstraintValidatorContext context) {
+//		if (value != null && !"".equals(value)) {
+//			if (tree.size() == 0) {
+//				List<String> list = sensitiveWordMapper.getList();
+//				for (String word : list) {
+//					tree.addWord(word);
+//				}
+//			}
+//			if (value instanceof String) {
+//				List<String> matchAll = tree.matchAll(value.toString(), -1, false, false);
+//				if (matchAll.size() > 0) {
+//					logger.debug("存在的敏感词>>>>>>>>>>>>>>:{}", matchAll.toString());
+//					return false;
+//				}
+//			} else if (value instanceof List) {
+//				for (int i = 0; i < ((List) value).size(); i++) {
+//					List<String> matchAll = tree.matchAll(((List) value).get(i).toString(), -1, false, false);
+//					if (matchAll.size() > 0) {
+//						logger.debug("存在的敏感词>>>>>>>>>>>>>>:{}", matchAll.toString());
+//						return false;
+//					}
+//				}
+//			}
+//		}
+//		return true;
+//	}

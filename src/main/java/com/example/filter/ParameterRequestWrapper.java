@@ -3,6 +3,7 @@ package com.example.filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -36,7 +37,15 @@ public class ParameterRequestWrapper extends HttpServletRequestWrapper {
 			return (String[]) v;
 		} else if (v instanceof String) {
 			return new String[] { (String) v };
-		} else {
+		} else if (v instanceof List) {
+			String[] array = null;
+			array = new String[((List) v).size()];
+			for (int i = 0; i < array.length; i++) {
+				array[i] = ((List) v).get(i).toString();
+			}
+			return array;
+		}
+		else {
 			return new String[] { v.toString() };
 		}
 	}

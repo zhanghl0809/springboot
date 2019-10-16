@@ -141,6 +141,18 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--org.htmlparser/htmlparser/ Maven依赖写法-->
+        <dependency>
+            <groupId>org.htmlparser</groupId>
+            <artifactId>htmlparser</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <!--谷歌图片处理-->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
     </dependencies>
 
     <build>
