@@ -46,7 +46,7 @@ public class BaseController extends BaseAppletController {
      */
     @PostMapping("/student")
     @SensitiveWordsFilter
-    public Object addStudent(@Valid Student student) throws Exception{
+    public Object addStudent(Student student) throws Exception{
 //        if (validateResult.hasErrors()) {
 //            System.out.println(validateResult.getModel());
 //            System.out.println(validateResult.getAllErrors().get(0).getCode());

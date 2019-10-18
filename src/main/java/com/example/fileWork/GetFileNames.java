@@ -7,6 +7,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * b遍历文件夹下所有的图片的文件
+ */
 public class GetFileNames {
 	public static List<File> getFiles(String path){
 		File root = new File(path);

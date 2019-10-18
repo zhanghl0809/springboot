@@ -3,11 +3,14 @@ package com.example.sensitiveWordFilter.constraintValidator;
 
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
+import com.example.Utiles.JsonUtil;
 import com.example.common.Const;
+import com.example.common.RspCommon;
 import com.example.common.TokenProccessor;
 import com.example.exception.SensitiveBindException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.logging.log4j.core.util.Assert;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -53,7 +56,7 @@ public class SensitiveWordsFilterAspect {
 	 * @param joinPoint
 	 */
 	@Around("sensitiveWordsFilter()")
-	public void advice(ProceedingJoinPoint joinPoint) throws Throwable {
+	public Object advice(ProceedingJoinPoint joinPoint) throws Throwable {
 		logger.debug("敏感词环绕通知开始-Around Begin");
 		//查询敏感词
 //		if (tree.size() == 0) {
@@ -62,19 +65,8 @@ public class SensitiveWordsFilterAspect {
 //				tree.addWord(word);
 //			}
 //		}
-		//执行到这里开始走进来的方法体（必须声明）
-		joinPoint.proceed();
-		//logger.debug("敏感词环绕通知结束-Around End");
-	}
 
-	/**
-	 * 当想获得注解里面的属性，可以直接注入改注解
-	 * 方法可以带参数，可以同时设置多个方法用
-	 *
-	 * @param joinPoint
-	 */
-	@Before("sensitiveWordsFilter()")
-	public void record(JoinPoint joinPoint) throws Exception {
+		//logger.debug("敏感词环绕通知结束-Around End");
 		System.out.println("敏感词---AOP配置");
 		Object result = null;
 		Signature signature = joinPoint.getSignature();
@@ -95,27 +87,48 @@ public class SensitiveWordsFilterAspect {
 				argList.add(JSON.toJSON(arg));
 			}
 		}
-			logger.debug("{} -> 方法({}) -> 参数:{} - {}", serviceName, methodName, JSON.toJSON(parameterNames),
-					JSON.toJSON(argList));
-			//net.sf.json.JSONObject 依赖的json处理
-			JSONArray array = JSONArray.fromObject(JSON.toJSON(argList));
-			for (int i = 0; i < array.size(); i++) {
-				JSONObject job = array.getJSONObject(i);
-				Iterator iterator = job.keys();
-				while (iterator.hasNext()) {
-					String key = (String) iterator.next();
-					if (!"deviceType".equals(key) && !"tradeTime".equals(key) && !"distinguish".equals(key)
-							&& !"identity".equals(key) && !"appid".equals(key)) {
-						String value = job.getString(key);
-//						List<String> matchAll = tree.matchAll(value, -1, false, false);
-						if(value.toString().contains("4")){
-							logger.debug("存在的敏感词>>>>>>>>>>>>>>:{}", value.toString());
-							throw new SensitiveBindException(Const.ERR_CODE, Const.SENSITIVE_EXCEPTION_PROMPTING_LANGUAGE);
-						}
-
+		logger.debug("{} -> 方法({}) -> 参数:{} - {}", serviceName, methodName, JSON.toJSON(parameterNames),
+				JSON.toJSON(argList));
+		//net.sf.json.JSONObject 依赖的json处理
+		JSONArray array = JSONArray.fromObject(JSON.toJSON(argList));
+		for (int i = 0; i < array.size(); i++) {
+			JSONObject job = array.getJSONObject(i);
+			Iterator iterator = job.keys();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				if (!"deviceType".equals(key) && !"tradeTime".equals(key) && !"distinguish".equals(key)
+						&& !"identity".equals(key) && !"appid".equals(key)) {
+					String value = job.getString(key);
+					//						List<String> matchAll = tree.matchAll(value, -1, false, false);
+					if(value.toString().contains("4")){
+						logger.debug("存在的敏感词>>>>>>>>>>>>>>:{}", value.toString());
+						throw new SensitiveBindException(Const.ERR_CODE, Const.SENSITIVE_EXCEPTION_PROMPTING_LANGUAGE);
 					}
+
 				}
 			}
+		}
+		//执行到这里开始走进来的方法体（必须声明）
+		Object rspBody = joinPoint.proceed();
+		RspCommon rsp = new RspCommon();
+//		if (!Assert.isEmpty(rspBody)) {
+//			rsp.setRspBody(rspBody);
+//		}
+
+		logger.debug("{}.{} 业务响应报文RspBody value:{}", new Object[] { serviceName, methodName, JsonUtil.formatJson(rsp) });
+
+		return rspBody;
+	}
+
+	/**
+	 * 当想获得注解里面的属性，可以直接注入改注解
+	 * 方法可以带参数，可以同时设置多个方法用
+	 *
+	 * @param joinPoint
+	 */
+	@Before("sensitiveWordsFilter()")
+	public void record(JoinPoint joinPoint) throws Exception {
+
 	}
 
 	@After("sensitiveWordsFilter()")
