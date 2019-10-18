@@ -57,6 +57,7 @@ public class SensitiveWordsFilterAspect {
 	 */
 	@Around("sensitiveWordsFilter()")
 	public Object advice(ProceedingJoinPoint joinPoint) throws Throwable {
+		System.out.println("AROUND~~~~~~~~~~~~~~~~~~~~");
 		logger.debug("敏感词环绕通知开始-Around Begin");
 		//查询敏感词
 //		if (tree.size() == 0) {
@@ -122,11 +123,12 @@ public class SensitiveWordsFilterAspect {
 	 */
 	@Before("sensitiveWordsFilter()")
 	public void record(JoinPoint joinPoint) throws Exception {
-
+		System.out.println("BEFORE~~~~~~~~~~~~");
 	}
 
 	@After("sensitiveWordsFilter()")
 	public void after() {
+		System.out.println("AFTER~~~~~~~~~~~~~~");
 		logger.debug("敏感词切面-After");
 		TokenProccessor instance = TokenProccessor.getInstance();
 		String token = instance.makeToken();
