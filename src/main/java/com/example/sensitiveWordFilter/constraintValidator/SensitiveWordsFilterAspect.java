@@ -104,19 +104,13 @@ public class SensitiveWordsFilterAspect {
 						logger.debug("存在的敏感词>>>>>>>>>>>>>>:{}", value.toString());
 						throw new SensitiveBindException(Const.ERR_CODE, Const.SENSITIVE_EXCEPTION_PROMPTING_LANGUAGE);
 					}
-
 				}
 			}
 		}
 		//执行到这里开始走进来的方法体（必须声明）
 		Object rspBody = joinPoint.proceed();
 		RspCommon rsp = new RspCommon();
-//		if (!Assert.isEmpty(rspBody)) {
-//			rsp.setRspBody(rspBody);
-//		}
-
 		logger.debug("{}.{} 业务响应报文RspBody value:{}", new Object[] { serviceName, methodName, JsonUtil.formatJson(rsp) });
-
 		return rspBody;
 	}
 
