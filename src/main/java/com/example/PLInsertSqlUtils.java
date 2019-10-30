@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class PLInsertSqlUtils {
 	public static void main(String[] args) {
-		File file = new File("D:\\mgc.txt");
-		System.out.println(file.exists());
-		toArrayByRandomAccessFile("D:\\mgc.txt");
-
+//		File file = new File("D:\\mgc.txt");
+//		System.out.println(file.exists());
+//		toArrayByRandomAccessFile("D:\\mgc.txt");
+		String str = String.format("%s张%s元代金券已经到账，折后抵扣更优惠！微信搜索”%s”小程序，使用本手机号登录立即使用。", "3", "50", "惠盈宝");
+		System.out.println(str);
 	}
 
 	public static void toArrayByRandomAccessFile(String name) {
@@ -35,12 +37,12 @@ public class PLInsertSqlUtils {
 			int i = 0;
 			for (String str : arrayList) {
 				if (i == 0) {
-					fileRe.writeBytes("INSERT INTO tb_sensitive (VALUE) VALUES ('"+str+"'), ");
+					fileRe.writeBytes("DELETE FROM tb_sensitive WHERE VALUE in ('"+str+"', ");
 				}else {
 					if(i == arrayList.size()-1){
-						fileRe.writeBytes("('"+str+"');");
+						fileRe.writeBytes("'"+str+"');");
 					}else {
-						fileRe.writeBytes("('"+str+"'),");
+						fileRe.writeBytes("'"+str+"',");
 					}
 				}
 				i++;

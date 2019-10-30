@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -130,8 +132,5 @@ public class SensitiveWordsFilterAspect {
 	public void after() {
 		System.out.println("AFTER~~~~~~~~~~~~~~");
 		logger.debug("敏感词切面-After");
-		TokenProccessor instance = TokenProccessor.getInstance();
-		String token = instance.makeToken();
-		System.out.println("token->>>>>>"+token);
 	}
 }

@@ -15,6 +15,7 @@ public class RspHead {
 	private String status = Const.NORMAL_CODE;
 
 	private String message;
+	private String token;
 
 	private Date rspTime = new Date();
 
@@ -32,7 +33,7 @@ public class RspHead {
 	 */
 	@Override
 	public String toString() {
-		return "RspHead [status=" + status + ", message=" + message + ", rspTime=" + rspTime + "]";
+		return "RspHead [status=" + status + ", message=" + message + ", rspTime=" + rspTime + ",token="+token+"]";
 	}
 
 	/**
@@ -64,4 +65,11 @@ public class RspHead {
 		this.rspTime = rspTime;
 	}
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 }
