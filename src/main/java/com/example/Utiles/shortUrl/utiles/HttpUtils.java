@@ -1,4 +1,4 @@
-package com.example.common.shortUrl.utiles;
+package com.example.Utiles.shortUrl.utiles;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;

@@ -1,8 +1,8 @@
-package com.example.common.shortUrl.impl;
+package com.example.Utiles.shortUrl.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.common.shortUrl.ShortUrlService;
-import com.example.common.shortUrl.utiles.HttpUtils;
+import com.example.Utiles.shortUrl.ShortUrlService;
+import com.example.Utiles.shortUrl.utiles.HttpUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -17,7 +17,6 @@ import java.util.Map;
  * 短连接服务
  * @author zhl
  */
-@Service
 public class ShortUrlServiceImpl implements ShortUrlService {
 	/**
 	 * 日志工具

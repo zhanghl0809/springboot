@@ -8,8 +8,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * 业务异常控制
  * 
- * @author LGD
- * @since 1.8
+ * @author zhl
  */
 public class BizException extends BaseException {
     
@@ -20,7 +19,7 @@ public class BizException extends BaseException {
     }
 
     public BizException(String message) {
-        super(String.format(message));
+        super(message);
         this.messageCode = "PR0000";
 
     }

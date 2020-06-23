@@ -1,4 +1,4 @@
-package com.example.fileYS;
+package com.example.Utiles;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
@@ -22,11 +22,7 @@ import java.io.OutputStream;
 //对于压缩图片来说上面就已经足够了。
 public class ThumbnailatorTest {
 
-    /**
-     *
-     * @param args
-     * @throws IOException
-     */
+
     public static void main(String[] args) throws IOException {
         ThumbnailatorTest thumbnailatorTest = new ThumbnailatorTest();
         thumbnailatorTest.test1();
@@ -52,7 +48,6 @@ public class ThumbnailatorTest {
     /**
      * 指定大小进行缩放
      *
-     * @throws IOException
      */
     private void test1() throws IOException {
         /*
@@ -67,10 +62,9 @@ public class ThumbnailatorTest {
     /**
      * 按照比例进行缩放
      *
-     * @throws IOException
      */
     private void test2() throws IOException {
-        /**
+        /*
          * scale(比例)
          */
         Thumbnails.of("images/test.jpg").scale(0.25f).toFile("C:/image_25%.jpg");
@@ -80,10 +74,9 @@ public class ThumbnailatorTest {
     /**
      * 不按照比例，指定大小进行缩放
      *
-     * @throws IOException
      */
     private void test3() throws IOException {
-        /**
+        /*
          * keepAspectRatio(false) 默认是按照比例缩放的
          */
         Thumbnails.of("images/test.jpg").size(120, 120).keepAspectRatio(false).toFile("C:/image_120x120.jpg");
@@ -95,7 +88,7 @@ public class ThumbnailatorTest {
      * @throws IOException
      */
     private void test4() throws IOException {
-        /**
+        /*
          * rotate(角度),正数：顺时针 负数：逆时针
          */
         Thumbnails.of("images/test.jpg").size(1280, 1024).rotate(90).toFile("C:/image+90.jpg");

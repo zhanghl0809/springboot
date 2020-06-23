@@ -1,15 +1,8 @@
 package com.example.Utiles;
 
-import com.example.common.shortUrl.impl.ShortUrlServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-
-import static java.lang.System.out;
-import static org.apache.http.HttpHeaders.USER_AGENT;
 
 public class ShortUrlUtils {
 
@@ -19,7 +12,7 @@ public class ShortUrlUtils {
 	sendPost(url,param);
 	}
 
-	public static String sendPost(String url, String param) {
+	static String sendPost(String url, String param) {
 		PrintWriter out = null;
 		BufferedReader in = null;
 
@@ -46,10 +39,9 @@ public class ShortUrlUtils {
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String line;
 			while ((line = in.readLine()) != null) {
-				result += line;
+				result = result + line;
 			}
 		} catch (Exception e) {
-			out.println("发送 POST 请求出现异常！" + e);
 			e.printStackTrace();
 		}
 		//使用finally块来关闭输出流、输入流

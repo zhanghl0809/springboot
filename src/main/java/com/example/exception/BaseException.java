@@ -1,35 +1,17 @@
-/*/*********************************************************************
- *======================================================================
- * CHANGE HISTORY LOG
- *----------------------------------------------------------------------
- * MOD. NO.|  DATE        | NAME           | REASON		 | CHANGE REQ.
- *----------------------------------------------------------------------
- *         |2015年2月5日 | liubing        | Created       |
- * DESCRIPTION:
- ***********************************************************************/
-/**
- * @Title: BaseException.java
- * @author liubing@buyforyou.cn
- * @date 2015年2月5日 下午2:07:57
- * @version V1.0
- */
 package com.example.exception;
 
 /**
- * @Description 异常基类 其它层异常需继承此基类
- * @Author liubing
- * @Date 2015年2月5日 下午2:07:57
- * @Copyright：北京邦孚力德商务服务有限公司
+ *  异常基类 其它层异常需继承此基类
  */
 public class BaseException extends Exception {
 
     private static final long serialVersionUID = -6077014216304140329L;
 
-    public String messageCode;
-    
-    
+    private String messageCode;
 
-    public String getMessageCode() {
+
+
+    private String getMessageCode() {
 		return messageCode;
 	}
 
@@ -37,15 +19,15 @@ public class BaseException extends Exception {
 		this.messageCode = messageCode;
 	}
 
-	public BaseException() {
+    private BaseException() {
         super();
     }
 
-    public BaseException(String message) {
+    private BaseException(String message) {
         super(message);
     }
 
-    public BaseException(String message, Throwable cause) {
+    private BaseException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -53,11 +35,11 @@ public class BaseException extends Exception {
         super(message, cause);
     }
 
-    public BaseException(Throwable cause) {
+    private BaseException(Throwable cause) {
         super(cause);
     }
 
-    public BaseException(String messageCode, String message) {
+    private BaseException(String messageCode, String message) {
 
         super(message);
         this.messageCode = messageCode;

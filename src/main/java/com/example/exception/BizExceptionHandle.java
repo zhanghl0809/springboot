@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * 统一异常处理
  * 
- * @author LGD
+ * @author zhl
  * @since 1.8
  * 修改原因：配合敏感词过滤，取消打印异常的堆栈信息 e.printStackTrace(),
  * 			其他异常需要手动增加堆栈信息的打印；

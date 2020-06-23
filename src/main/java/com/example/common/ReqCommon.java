@@ -7,8 +7,7 @@ import lombok.Data;
 
 /**
  * 公共请求报文头
- * @author LGD
- * @since 1.8
+ * @author zhl
  */
 @Data
 public class ReqCommon {

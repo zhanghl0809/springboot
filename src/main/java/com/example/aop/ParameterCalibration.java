@@ -14,272 +14,272 @@ import com.example.common.TokenProccessor;
 import com.example.exception.BizException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.core.util.Assert;
+import org.apache.logging.log4j.core.util.UuidUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
+
+import cn.hutool.core.util.IdUtil;
 
 /**
  * 参数校验AOP
  *
- * @author LGD
- * @since 1.8
  */
-@Aspect @Component @Order(1) public class ParameterCalibration extends BaseLogger {
+@Aspect
+@Component
+@Order(1)
+public class ParameterCalibration extends BaseLogger {
 
-	private static Logger logger = LoggerFactory.getLogger(ParameterCalibration.class);
+    private static final String ENCODING = "UTF-8";
+    private static Logger logger = LoggerFactory.getLogger(ParameterCalibration.class);
 
-	private static final String ENCODING = "UTF-8";
 
-	//	@Autowired
-	//	private ITbSysCompanySetService bdsConstService;
+    /**
+     * AOP 拦截所有controller
+     */
 
-	/**
-	 * AOP 拦截所有controller
-	 */
-	@Pointcut("execution(public * com.example.controller..*.*(..))") public void pointCut() {
+    @Pointcut("execution(public * com.example.controller..*.*(..)) ")
+    public void pointCut() {
+    }
 
-	}
+    @SuppressWarnings("unchecked")
+    @Around("pointCut()")
+    public Object parameterCalibration(ProceedingJoinPoint pjp) throws Throwable {
 
-	@SuppressWarnings("unchecked") @Around("pointCut()") public Object parameterCalibration(ProceedingJoinPoint pjp)
-			throws Throwable {
-		System.out.println("参数校验AOP参数校验AOP参数校验AOP");
-		String className = pjp.getTarget().getClass().getName(); // 拦截类
-		String methodName = pjp.getSignature().getName() + "()";
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String hostAddress = InetAddress.getLocalHost().getHostAddress();
 
-		Object[] args = pjp.getArgs();// Returns the arguments at this join point.
+        StopWatch stopwatch = new StopWatch("pjp");
+        stopwatch.start();
 
-		StringBuffer params = new StringBuffer();
-		Map<String, String> resultMap = new HashMap<String, String>();
-		for (Object object : args) {
-			Object obj = object;
-			params.append(JsonUtil.formatJson(obj));
-			resultMap = checking(obj);
-		}
-		Map<String, String> reqMap = new HashMap<>();
-		if (!Assert.isEmpty(params)) {
-			reqMap = JsonUtil.parseJson(params.toString(), Map.class);
+        Class<?> classTarget = pjp.getTarget().getClass();
+        Class<?>[] par = ((MethodSignature) pjp.getSignature()).getParameterTypes();
+        Method method = classTarget.getMethod(pjp.getSignature().getName(), par);//拦截方法
+        String methodName = method.getName();
+        String className = classTarget.getName(); // 拦截类完整名称
 
-			if (reqMap.containsKey("password")) {
-				Map<String, String> map = new HashMap<>();
-				map.putAll(reqMap);
-				map.put("password", "******");
-				logger.debug("{}.{} 业务请求报文RequestBody value:{}",
-						new Object[] { className, methodName, JsonUtil.formatJson(map) });
-			} else {
-				logger.debug("{}.{} 业务请求报文RequestBody value:{}",
-						new Object[] { className, methodName, JsonUtil.formatJson(reqMap) });
-			}
+        //准备方法注解
+        String interfaceName = interfaceName(method);
 
-			if ("true".equals(resultMap.get("paramError"))) {
-				throw new BizException(String.format("{%s},参数格式错误！", resultMap.get("errorField")));
-			}
+        Object[] args = pjp.getArgs();// Returns the arguments at this join point.
+        StringBuffer params = new StringBuffer();
+        Map<String, String> resultMap = new HashMap<String, String>();
+        for (Object object : args) {
+            Object obj = object;
+            params.append(JsonUtil.formatJson(obj));
+            resultMap = checking(obj);
+        }
+        String logId = IdUtil.fastSimpleUUID();
 
-			businessCheck(reqMap);
-		}
+        //参数非空执行
+        if (!Assert.isEmpty(params)) {
+            Map<String, String> reqMap = JsonUtil.parseJson(params.toString(), Map.class);
 
-		RspCommon rsp = new RspCommon();
-		//token 重复提交验证
-		//1.验证请求体 是否有token关键字
-		if (reqMap.containsKey("token")) {
-			//2.生成token的方法实现
-			TokenProccessor instance = TokenProccessor.getInstance();
-			String token = instance.makeToken();
-			RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-			HttpServletRequest request = (HttpServletRequest) requestAttributes
-					.resolveReference(RequestAttributes.REFERENCE_REQUEST);
-			logger.debug("生成的token码:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::{}", token);
-			//3.1 判断token是否有值。如没有值 代表第一次发起请求，服务端生产token给前台。
-			//3.2 若存在token，代表不是第一次请求，进行token的校验，验证是否是重复提交。
-			if (StringUtils.isEmpty(reqMap.get("token"))) {
-				//第一次提交请求。
-				System.out.println("token 为 null");
-				request.getSession().setAttribute("sessionToken", token);
-				rsp.getRspHead().setToken(token);
-			} else {
-				//非第一次提交请求。
-				//如token相等，代表第一次提交。然后更新session的token值。
-				if (reqMap.get("token").toString().equals(request.getSession().getAttribute("sessionToken"))) {
-					request.getSession().setAttribute("sessionToken", token);
-					rsp.getRspHead().setToken(reqMap.get("token").toString());
-				}else{
-					throw new BizException("token校验异常，表单重复提交");
-				}
-			}
-		}else{
-			throw new BizException("请求参数不正确！》》》无token关键字！");
-		}
-		Object rspBody = pjp.proceed();
-		rsp.setRspBody(rspBody);
-		logger.debug("{}.{} 业务响应报文RspBody value:{}", new Object[] { className, methodName, JsonUtil.formatJson(rsp) });
+            if (reqMap.containsKey("password") || reqMap.containsKey("pwd")) {
+                Map<String, String> map = new HashMap<>();
+                map.putAll(reqMap);
+                map.put("password", "******");
+                logger.info("{}||{}||Request ||-{}-||{}", hostAddress, logId, interfaceName,JsonUtil.formatJson(map));
+            } else {
+                logger.info("{}||{}||Request ||-{}-||{}", hostAddress, logId, interfaceName,JsonUtil.formatJson(reqMap));
+            }
 
-		return rsp;
-	}
+            if ("true".equals(resultMap.get("paramError"))) {
+                throw new BizException(String.format("{%s},参数格式错误！", resultMap.get("errorField")));
+            }
 
-	;
+            // businessCheck(reqMap);
+        }
+        Object rspBody = pjp.proceed();
+        RspCommon rsp = new RspCommon();
+        if (!Assert.isEmpty(rspBody)) {
+            rsp.setRspBody(rspBody);
+        }
+        stopwatch.stop();
+        logger.info("{}||{}||Response||{}||-{}-||{}ms", hostAddress, logId, interfaceName,JsonUtil.formatJson(rsp),stopwatch.getTotalTimeMillis());
+        return rsp;
+    }
 
-	/**
-	 * Parameter business check
-	 */
-	private void businessCheck(Map<String, String> reqMap) throws Exception {
-		// parameter service check
-		// Small procedures belong to the body check
-		if (reqMap.containsKey("distinguish")) {
-			if (!StringUtils.isEmpty(reqMap.get("distinguish"))) {
-				//				bdsConstService.getCompanyId(reqMap.get("distinguish").toString());
-			}
-		}
-		// parameter service check
-		// distinguish check
-		if (reqMap.containsKey("identity")) {
-			if (!StringUtils.isEmpty(reqMap.get("identity"))) {
-				//				bdsConstService.getCompanyId(reqMap.get("identity").toString());
-			}
-		}
-	}
 
-	/**
-	 * 参数校验
-	 *
-	 * @param obj
-	 * @return
-	 * @description 校验参数是否符合该参数所属注解
-	 */
-	private Map<String, String> checking(Object obj) throws Exception {
+    /**
+     * Parameter business check
+     */
+    private void businessCheck(Map<String, String> reqMap) throws Exception {
 
-		Map<String, String> resultMap = new HashMap<String, String>();
+    }
 
-		Field[] fields = ReflectionUtils.getDeclaredField(obj);
+    /**
+     * 参数校验
+     *
+     * @param obj
+     * @return
+     * @description 校验参数是否符合该参数所属注解
+     */
+    private Map<String, String> checking(Object obj) throws Exception {
 
-		annotationCalibration(resultMap, fields, obj);
+        Map<String, String> resultMap = new HashMap<String, String>();
 
-		return resultMap;
-	}
+        Field[] fields = ReflectionUtils.getDeclaredField(obj);
 
-	/**
-	 * 字段校验
-	 *
-	 * @param resultMap
-	 * @param fields
-	 * @param obj
-	 * @throws Exception
-	 */
-	private void annotationCalibration(Map<String, String> resultMap, Field[] fields, Object obj) throws Exception {
-		for (Field field : fields) {
-			String filedName = field.getName();// 获得参数名称
-			Object singleParam = ReflectionUtils.getInvoke(obj, filedName, false);
+        annotationCalibration(resultMap, fields, obj);
 
-			// notNull校验
-			if (field.isAnnotationPresent(NotNull.class)) {
-				if (singleParam == null || "".equals(singleParam)) {
-					logger.debug(filedName + " cannot be null");
-					resultMap.put("paramError", "true");
-					resultMap.put("errorField", filedName);
-					break;
-				}
-			}
+        return resultMap;
+    }
 
-			if (field.isAnnotationPresent(TextType.class)) {
+    /**
+     *
+     * 方法名称获取
+     *
+     * @param method
+     * @return
+     */
+    private String interfaceName(Method method){
+        String interfaceName = "";
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            String values[] = requestMapping.value();
+            interfaceName = values[0];
+        }
+        if(method.isAnnotationPresent(PostMapping.class)){
+            PostMapping PostMapping = method.getAnnotation(PostMapping.class);
+            String values[] = PostMapping.value();
+            interfaceName = values[0];
+        }
+        if(method.isAnnotationPresent(GetMapping.class)){
+            GetMapping GetMapping = method.getAnnotation(GetMapping.class);
+            String values[] = GetMapping.value();
+            interfaceName = values[0];
+        }
+        return interfaceName;
+    }
+    /**
+     * 字段校验
+     *
+     * @param resultMap
+     * @param fields
+     * @param obj
+     * @throws Exception
+     */
+    private void annotationCalibration(Map<String, String> resultMap, Field[] fields, Object obj) throws Exception {
+        for (Field field : fields) {
+            String filedName = field.getName();// 获得参数名称
+            Object singleParam = ReflectionUtils.getInvoke(obj, filedName, false);
 
-				TextType textType = field.getAnnotation(TextType.class);
-				boolean notNull = textType.notNull();
+            // notNull校验
+            if (field.isAnnotationPresent(NotNull.class)) {
+                if (singleParam == null || "".equals(singleParam)) {
+                    logger.debug(filedName + " cannot be null");
+                    resultMap.put("paramError", "true");
+                    resultMap.put("errorField", filedName);
+                    break;
+                }
+            }
 
-				if (notNull) {
-					if (singleParam == null || "".equals(singleParam)) {
-						logger.debug(filedName + " cannot be empty");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
+            if (field.isAnnotationPresent(TextType.class)) {
 
-				if (singleParam != null && !"".equals(singleParam)) {
-					int max = textType.maxLength();
-					int min = textType.minLength();
-					if (singleParam.toString().getBytes(ENCODING).length < min) {
-						logger.debug(
-								filedName + " minLength is [" + min + "], but input [" + singleParam.toString().length()
-										+ "]");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					} else if (singleParam.toString().getBytes(ENCODING).length > max) {
-						logger.debug(
-								filedName + " maxLength is [" + max + "], but input [" + singleParam.toString().length()
-										+ "]");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
-			}
+                TextType textType = field.getAnnotation(TextType.class);
+                boolean notNull = textType.notNull();
 
-			if (field.isAnnotationPresent(EnumType.class)) {
-				EnumType enumType = field.getAnnotation(EnumType.class);
-				boolean notNull = enumType.notNull();
-				if (notNull) {
-					if (singleParam == null || "".equals(singleParam)) {
-						logger.debug(filedName + " cannot be empty");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
-				if (singleParam != null && !"".equals(singleParam)) {
-					String[] allows = enumType.allows();
-					Arrays.sort(allows);
-					int index = Arrays.binarySearch(allows, singleParam.toString());
-					if (index < 0) {
-						logger.debug(filedName + " must in [" + Arrays.toString(allows) + "], but input [" + singleParam
-								.toString() + "] is not in");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
-			}
+                if (notNull) {
+                    if (singleParam == null || "".equals(singleParam)) {
+                        logger.debug(filedName + " cannot be empty");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
 
-			if (field.isAnnotationPresent(NumberType.class)) {
-				NumberType numberType = field.getAnnotation(NumberType.class);
-				boolean notNull = numberType.notNull();
-				if (notNull) {
-					if (singleParam == null || "".equals(singleParam)) {
-						logger.debug(filedName + " cannot be empty");
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
-				if (singleParam != null && !"".equals(singleParam)) {
-					int length = numberType.length();
-					Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-					// Pattern pattern =
-					// Pattern.compile("^[-\\+]?(([1-9][0-9]*)|(([0]\\.\\d{1,2}|[1-9][0-9]*\\.\\d{1,2})))$");
-					if (!pattern.matcher(singleParam.toString()).matches()
-							|| singleParam.toString().length() > length) {
-						resultMap.put("paramError", "true");
-						resultMap.put("errorField", filedName);
-						break;
-					}
-				}
-			}
+                if (singleParam != null && !"".equals(singleParam)) {
+                    int max = textType.maxLength();
+                    int min = textType.minLength();
+                    if (singleParam.toString().getBytes(ENCODING).length < min) {
+                        logger.debug(filedName + " minLength is [" + min + "], but input [" + singleParam.toString().length() + "]");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    } else if (singleParam.toString().getBytes(ENCODING).length > max) {
+                        logger.debug(filedName + " maxLength is [" + max + "], but input [" + singleParam.toString().length() + "]");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
+            }
 
-		}
-	}
+            if (field.isAnnotationPresent(EnumType.class)) {
+                EnumType enumType = field.getAnnotation(EnumType.class);
+                boolean notNull = enumType.notNull();
+                if (notNull) {
+                    if (singleParam == null || "".equals(singleParam)) {
+                        logger.debug(filedName + " cannot be empty");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
+                if (singleParam != null && !"".equals(singleParam)) {
+                    String[] allows = enumType.allows();
+                    Arrays.sort(allows);
+                    int index = Arrays.binarySearch(allows, singleParam.toString());
+                    if (index < 0) {
+                        logger.debug(filedName + " must in [" + Arrays.toString(allows) + "], but input [" + singleParam.toString() + "] is not in");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
+            }
+
+            if (field.isAnnotationPresent(NumberType.class)) {
+                NumberType numberType = field.getAnnotation(NumberType.class);
+                boolean notNull = numberType.notNull();
+                if (notNull) {
+                    if (singleParam == null || "".equals(singleParam)) {
+                        logger.debug(filedName + " cannot be empty");
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
+                if (singleParam != null && !"".equals(singleParam)) {
+                    int length = numberType.length();
+                    Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+                    // Pattern pattern =
+                    // Pattern.compile("^[-\\+]?(([1-9][0-9]*)|(([0]\\.\\d{1,2}|[1-9][0-9]*\\.\\d{1,2})))$");
+                    if (!pattern.matcher(singleParam.toString()).matches() || singleParam.toString().length() > length) {
+                        resultMap.put("paramError", "true");
+                        resultMap.put("errorField", filedName);
+                        break;
+                    }
+                }
+            }
+
+        }
+    }
 
 }

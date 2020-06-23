@@ -6,8 +6,7 @@ package com.example.common;
 /**
  * 公共响应报文头
  * 
- * @author LGD
- * @since 1.8
+ * @author zhl
  */
 public class RspCommon {
 

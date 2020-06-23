@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * 
- * @author LGD
+ * @author zhl
  * @since 1.8
  */
 public class RspHead {

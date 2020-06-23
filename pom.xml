@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>small-api</artifactId>
+    <version>1</version>
     <packaging>jar</packaging>
 
-    <name>demo</name>
-    <description>Demo</description>
+    <name>small-api</name>
+    <description>small-api</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -152,6 +152,12 @@
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
+        </dependency>
+        <!--minio-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>7.0.2</version>
         </dependency>
     </dependencies>
 

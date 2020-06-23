@@ -1,10 +1,6 @@
 package com.example.exception;
 
-/**
- * @Date 2019/1/14-15:46
- * @Author Amarone
- * @Description
- **/
+
 public class EasemobException extends BaseException {
 
     public EasemobException(String messageCode, String message, Throwable cause) {
