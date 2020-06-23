@@ -14,7 +14,7 @@ public class ReflectionUtils {
 	 * @param invokeObj 将调用的方法所属对象
 	 * @param attr 需要调用get方法的属性
 	 * @return 返回对应get方法得到的对象
-	 * @throws ReflectException 若不存在对应属性或发生异常将抛出此异常
+	 * @throws Exception 若不存在对应属性或发生异常将抛出此异常
 	 */
 	public static Object getInvoke(Object invokeObj, String attr, boolean isBoolean) throws Exception {
 		String methodName = getBeanMethodName("get", attr);
@@ -102,7 +102,7 @@ public class ReflectionUtils {
 	 * @param invokeObj 将调用的方法所属对象
 	 * @param attr 需要调用set方法的属性名
 	 * @param setValue 需要设置的值
-	 * @throws ReflectException ReflectException 若不存在对应属性或发生异常将抛出此异常
+	 * @throws Exception ReflectException 若不存在对应属性或发生异常将抛出此异常
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void setInvoke(Object invokeObj, String attr, Object setValue) throws Exception {

@@ -7,11 +7,11 @@ public class BaseException extends Exception {
 
     private static final long serialVersionUID = -6077014216304140329L;
 
-    private String messageCode;
+    public String messageCode;
 
 
 
-    private String getMessageCode() {
+    public String getMessageCode() {
 		return messageCode;
 	}
 
@@ -19,15 +19,15 @@ public class BaseException extends Exception {
 		this.messageCode = messageCode;
 	}
 
-    private BaseException() {
+    public BaseException() {
         super();
     }
 
-    private BaseException(String message) {
+    public BaseException(String message) {
         super(message);
     }
 
-    private BaseException(String message, Throwable cause) {
+    public BaseException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -35,11 +35,11 @@ public class BaseException extends Exception {
         super(message, cause);
     }
 
-    private BaseException(Throwable cause) {
+    public BaseException(Throwable cause) {
         super(cause);
     }
 
-    private BaseException(String messageCode, String message) {
+    public BaseException(String messageCode, String message) {
 
         super(message);
         this.messageCode = messageCode;
