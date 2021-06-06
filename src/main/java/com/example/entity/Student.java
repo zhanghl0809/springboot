@@ -1,7 +1,7 @@
 package com.example.entity;
 
 import com.example.common.ReqCommon;
-import com.example.sensitiveWordFilter.annotation.Sensitive;
+import com.example.checker.sensitive.annotation.Sensitive;
 
 public class Student extends ReqCommon {
     @Sensitive

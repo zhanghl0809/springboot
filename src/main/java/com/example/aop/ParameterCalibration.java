@@ -3,8 +3,8 @@
  */
 package com.example.aop;
 
-import com.example.Utiles.JsonUtil;
-import com.example.Utiles.ReflectionUtils;
+import com.example.utiles.JsonUtil;
+import com.example.utiles.ReflectionUtils;
 import com.example.base.BaseLogger;
 import com.example.checker.EnumType;
 import com.example.checker.NumberType;
@@ -107,9 +107,12 @@ public class ParameterCalibration extends BaseLogger {
             if ("true".equals(resultMap.get("paramError"))) {
                 throw new BizException(String.format("{%s},参数格式错误！", resultMap.get("errorField")));
             }
-
-            // businessCheck(reqMap);
+        }else{
+            logger.info("{}||{}||Request ||-{}-||{}", hostAddress, logId, interfaceName,"无请求body");
         }
+
+        // businessCheck(reqMap);
+
         Object rspBody = pjp.proceed();
         RspCommon rsp = new RspCommon();
         if (!Assert.isEmpty(rspBody)) {

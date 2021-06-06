@@ -1,10 +1,8 @@
-package com.example.Utiles;
+package com.example.utiles;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class Mytest {
 

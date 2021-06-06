@@ -1,16 +1,14 @@
-package com.example.sensitiveWordFilter.constraintValidator;
+package com.example.checker.sensitive.constraint;
 
 
 import cn.hutool.dfa.WordTree;
-import com.example.sensitiveWordFilter.annotation.Sensitive;
+import com.example.checker.sensitive.annotation.Sensitive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 
 /**
  * @author zhl

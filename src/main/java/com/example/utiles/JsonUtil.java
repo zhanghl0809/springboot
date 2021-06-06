@@ -1,7 +1,7 @@
 /*
  * Copyright 2014-2018 buyforyou.cn. All rights reserved.
  */
-package com.example.Utiles;
+package com.example.utiles;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

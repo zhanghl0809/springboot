@@ -1,9 +1,9 @@
-package com.example.sensitiveWordFilter.annotation;
+package com.example.checker.sensitive.annotation;
 
 
 
 import com.example.common.Const;
-import com.example.sensitiveWordFilter.constraintValidator.SensitiveValidator;
+import com.example.checker.sensitive.constraint.SensitiveValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

@@ -1,4 +1,4 @@
-package com.example.Utiles;
+package com.example.utiles;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;

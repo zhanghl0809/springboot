@@ -10,5 +10,5 @@ import lombok.NonNull;
 public class T1Vo extends ReqCommon {
 
     @NonNull
-    private String str;
+    private String id;
 }

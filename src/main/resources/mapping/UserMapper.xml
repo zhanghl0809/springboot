@@ -6,52 +6,46 @@
         <result column="id" jdbcType="INTEGER" property="id" />
         <result column="userName" jdbcType="VARCHAR" property="userName" />
         <result column="passWord" jdbcType="VARCHAR" property="passWord" />
+        <result column="realName" jdbcType="VARCHAR" property="realName" />
     </resultMap>
 
     <select id="Sel" resultType="com.example.entity.User">
         select * from user where id = #{id}
     </select>
 
-    <!--<insert id="insert" parameterType="com.example.entity.User">
-        insert into User (userId, userName, phone,
-        sex)
-        values (#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
-        #{sex,jdbcType=VARCHAR})
+    <insert id="insert" parameterType="com.example.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into User (userName,passWord, realName)
+        values ( #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR})
     </insert>
 
-    <insert id="insertSelective" parameterType="com.example.entity.User">
+    <insert id="insertSelective" parameterType="com.example.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into User
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="userid != null">
-                userId,
-            </if>
             <if test="username != null">
                 userName,
             </if>
-            <if test="phone != null">
-                phone,
+            <if test="passWord != null">
+                passWord,
             </if>
-            <if test="sex != null">
-                sex,
+            <if test="realName != null">
+                realName,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="userid != null">
-                #{userid,jdbcType=INTEGER},
+
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
             </if>
-            <if test="username != null">
-                #{username,jdbcType=VARCHAR},
+            <if test="passWord != null">
+                #{passWord,jdbcType=VARCHAR},
             </if>
-            <if test="phone != null">
-                #{phone,jdbcType=VARCHAR},
-            </if>
-            <if test="sex != null">
-                #{sex,jdbcType=VARCHAR},
+            <if test="realName != null">
+                #{realName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
 
     <select id="findAllUser" resultType="com.example.entity.User">
         select * from User
-    </select>-->
+    </select>
 </mapper>

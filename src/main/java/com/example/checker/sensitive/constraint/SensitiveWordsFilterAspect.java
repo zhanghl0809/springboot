@@ -1,9 +1,8 @@
-package com.example.sensitiveWordFilter.constraintValidator;
-
+package com.example.checker.sensitive.constraint;
 
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
-import com.example.Utiles.JsonUtil;
+import com.example.utiles.JsonUtil;
 import com.example.common.Const;
 import com.example.common.RspCommon;
 import com.example.exception.SensitiveBindException;
@@ -24,12 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-/**
- * AOP配置
- * 切面
- */
-
 /**
  * SensitiveWordsFilterAspect class
  *
@@ -43,7 +36,7 @@ public class SensitiveWordsFilterAspect {
 	private static WordTree tree = new WordTree();
 //	@Autowired private SensitiveWordMapper sensitiveWordMapper;
 
-	@Pointcut("@annotation(com.example.sensitiveWordFilter.annotation.SensitiveWordsFilter)")
+	@Pointcut("@annotation(com.example.checker.sensitive.annotation.SensitiveWordsFilter)")
 	private void sensitiveWordsFilter() {
 
 	}

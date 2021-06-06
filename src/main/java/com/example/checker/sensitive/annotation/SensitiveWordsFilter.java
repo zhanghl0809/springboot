@@ -1,4 +1,4 @@
-package com.example.sensitiveWordFilter.annotation;
+package com.example.checker.sensitive.annotation;
 
 import java.lang.annotation.*;
 

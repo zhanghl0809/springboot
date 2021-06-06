@@ -52,7 +52,7 @@ public class ParameterTransFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		System.out.println("拦截器销毁========拦截器销毁========");
+
 	}
 
 }
