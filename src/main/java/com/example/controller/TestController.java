@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestController {
 
     @Autowired
+
+
     private MinioHelper minioHelper;
 
     @PostMapping("/upload")
